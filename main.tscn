@@ -1,0 +1,138 @@
+[gd_scene load_steps=12 format=3 uid="uid://cw7untqsdbw28"]
+
+[ext_resource type="Script" uid="uid://cvu1i7wufsyqd" path="res://main.gd" id="1_272bh"]
+[ext_resource type="Script" uid="uid://bbuyvmuc8xw00" path="res://player.gd" id="1_ig7tw"]
+[ext_resource type="PackedScene" uid="uid://bc6ylavf24ypc" path="res://snowball.tscn" id="3_5vw27"]
+[ext_resource type="Texture2D" uid="uid://d2fv10fxb8lva" path="res://pixil-frame-0 (1) (1).png" id="4_5vw27"]
+[ext_resource type="Texture2D" uid="uid://nn8do1xlp7mm" path="res://icon.svg" id="4_kek77"]
+[ext_resource type="Script" uid="uid://nv202jil2jte" path="res://gate.gd" id="5_4c57u"]
+[ext_resource type="Script" uid="uid://c5qcygob2l70v" path="res://enemy_spawner.gd" id="6_efxa6"]
+[ext_resource type="PackedScene" uid="uid://m4w71bg6xeao" path="res://enemy.tscn" id="7_dg77c"]
+[ext_resource type="Script" uid="uid://dw28kleopo2j1" path="res://ui.gd" id="9_kek77"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ycdy4"]
+size = Vector2(86.5, 82)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_w48qg"]
+size = Vector2(1140, 171.5)
+
+[node name="Main" type="Node2D"]
+process_mode = 3
+position = Vector2(73, 22)
+script = ExtResource("1_272bh")
+
+[node name="Player" type="CharacterBody2D" parent="."]
+position = Vector2(478, 137)
+script = ExtResource("1_ig7tw")
+snowball_scene = ExtResource("3_5vw27")
+
+[node name="Sprite2D" type="Sprite2D" parent="Player"]
+texture_filter = 1
+position = Vector2(95.00001, 216)
+scale = Vector2(4.88, 4.66)
+texture = ExtResource("4_5vw27")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
+position = Vector2(25.75, 186.5)
+shape = SubResource("RectangleShape2D_ycdy4")
+
+[node name="ShootPoint" type="Marker2D" parent="Player"]
+position = Vector2(-15, 132)
+
+[node name="Castle" type="Area2D" parent="." node_paths=PackedStringArray("health_bar")]
+position = Vector2(216, 91)
+collision_layer = 4
+collision_mask = 2
+script = ExtResource("5_4c57u")
+health_bar = NodePath("../UI/HealthBar")
+
+[node name="Sprite2D" type="Sprite2D" parent="Castle"]
+position = Vector2(283.00018, 447)
+scale = Vector2(8.749999, 1.3281251)
+texture = ExtResource("4_kek77")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Castle"]
+position = Vector2(286, 445)
+shape = SubResource("RectangleShape2D_w48qg")
+
+[node name="EnemySpawner" type="Node2D" parent="."]
+position = Vector2(547, -3)
+script = ExtResource("6_efxa6")
+enemy_scene = ExtResource("7_dg77c")
+
+[node name="Time" type="CanvasLayer" parent="."]
+offset = Vector2(10, 10)
+transform = Transform2D(1, 0, 0, 1, 10, 10)
+
+[node name="TimeLabel" type="Label" parent="Time"]
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="UI" type="CanvasLayer" parent="."]
+process_mode = 3
+visible = false
+script = ExtResource("9_kek77")
+
+[node name="LostLabel" type="Label" parent="UI"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -37.0
+offset_top = -74.0
+offset_right = 41.0
+offset_bottom = -51.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "YOU LOST!"
+
+[node name="TimeLabel" type="Label" parent="UI"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -38.0
+offset_right = 23.0
+offset_bottom = -15.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Time:"
+
+[node name="BestLabel" type="Label" parent="UI"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "Best:"
+
+[node name="RetryLabel" type="Label" parent="UI"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -63.0
+offset_top = 20.0
+offset_right = 59.0
+offset_bottom = 43.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Press R to Retry"
+
+[node name="HealthBar" type="ColorRect" parent="UI"]
+offset_right = 200.06
+offset_bottom = 20.0
+color = Color(0.105882354, 1, 1, 1)
+
+[connection signal="body_entered" from="Castle" to="Player" method="_on_gate_body_entered"]
+[connection signal="body_entered" from="Castle" to="Castle" method="_on_body_entered"]
